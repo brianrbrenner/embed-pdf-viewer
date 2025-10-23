@@ -1,5 +1,5 @@
 import { PDF_FORM_FIELD_FLAG } from '@embedpdf/models';
-import { FormEvent, useCallback, useMemo, CSSProperties } from '@framework';
+import { FormEvent, useCallback, useMemo } from '@framework';
 
 import { FieldProps } from '../types';
 import { inputStyle, textareaStyle } from './style';

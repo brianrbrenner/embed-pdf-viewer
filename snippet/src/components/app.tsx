@@ -3023,7 +3023,7 @@ export function PDFViewer({ config }: PDFViewerProps) {
                                             </div>
                                           )}
                                         />
-                                        <FormLayer pageIndex={pageIndex} scale={scale} />
+                                        <FormLayer pageIndex={pageIndex} editable={false} scale={scale} />
                                         <SelectionLayer pageIndex={pageIndex} scale={scale} />
                                       </PagePointerProvider>
                                     </Rotate>

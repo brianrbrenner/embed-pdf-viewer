@@ -22,6 +22,9 @@ importers:
       '@changesets/get-github-info':
         specifier: ^0.6.0
         version: 0.6.0(encoding@0.1.13)
+      '@eslint/js':
+        specifier: ^9.27.0
+        version: 9.28.0
       '@roarr/cli':
         specifier: ^5.12.4
         version: 5.12.4(encoding@0.1.13)

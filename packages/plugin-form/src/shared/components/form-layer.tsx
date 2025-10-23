@@ -1,22 +1,22 @@
-import { Fragment, useCallback, useEffect, useRef, useState } from '@framework';
+import { useCallback, useEffect, useState } from '@framework';
 import type { CSSProperties, HTMLAttributes } from '@framework';
 
-import { FormFieldValue, ignore, PdfErrorCode, PdfWidgetAnnoObject } from '@embedpdf/models';
+import { FormFieldValue, ignore, PdfWidgetAnnoObject } from '@embedpdf/models';
 
-import { useFormCapability, useFormPlugin } from '../hooks/use-form';
 import { Field } from './field';
+import { useFormPlugin } from '../hooks/use-form';
 
 type FormLayerProps = Omit<HTMLAttributes<HTMLDivElement>, 'style'> & {
   pageIndex: number;
   /**
    * The scale factor for rendering the page.
    */
+  editable?: boolean;
   scale?: number;
   style?: CSSProperties;
 };
 
-export function FormLayer({ pageIndex, scale, style, ...props }: FormLayerProps) {
-  const { provides: formProvides } = useFormCapability();
+export function FormLayer({ pageIndex, scale, style, editable, ...props }: FormLayerProps) {
   const { plugin: formPlugin } = useFormPlugin();
 
   const [annoWidgets, setAnnoWidgets] = useState<PdfWidgetAnnoObject[]>([]);
@@ -45,7 +45,7 @@ export function FormLayer({ pageIndex, scale, style, ...props }: FormLayerProps)
           pageIndex={pageIndex}
           annotation={annoWidget}
           field={annoWidget.field}
-          isEditable={true}
+          isEditable={editable ?? true}
           values={[]}
           onChangeValues={(values) => onChangeValues(annoWidget, values)}
         />
