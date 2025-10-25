@@ -1,12 +1,13 @@
-import { Fragment } from '@framework';
 import { PDF_FORM_FIELD_FLAG, PDF_FORM_FIELD_TYPE } from '@embedpdf/models';
+import { Fragment } from '@framework';
+
 import { CheckboxField } from './fields/checkbox';
 import { ComboboxField } from './fields/combobox';
-import { FieldProps } from './types';
 import { PushButtonField } from './fields/push-button';
 import { RadioButtonField } from './fields/radio-button';
-import { RenderWidget } from './render-widget';
 import { TextField } from './fields/text';
+import { RenderWidget } from './render-widget';
+import { FieldProps } from './types';
 
 /**
  *
@@ -14,7 +15,7 @@ import { TextField } from './fields/text';
  * @returns Field component
  */
 export function Field(props: FieldProps) {
-  const { field, isEditable } = props;
+  const { field } = props;
 
   let content = null;
   const { type } = field;
@@ -53,7 +54,13 @@ export function Field(props: FieldProps) {
         position: 'absolute',
       }}
     >
-      {content}
+      {content ?? (
+        <RenderWidget
+          pageIndex={props.pageIndex}
+          annotation={props.annotation}
+          scaleFactor={props.scale}
+        />
+      )}
     </div>
   );
 }

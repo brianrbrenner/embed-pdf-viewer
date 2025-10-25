@@ -1,7 +1,5 @@
-import { h, Fragment } from 'preact';
-import styles from '../styles/index.css';
-import { EmbedPDF } from '@embedpdf/core/preact';
 import { createPluginRegistration } from '@embedpdf/core';
+import { EmbedPDF } from '@embedpdf/core/preact';
 import { usePdfiumEngine } from '@embedpdf/engines/preact';
 import {
   AllLogger,
@@ -15,73 +13,6 @@ import {
   uuidV4,
 } from '@embedpdf/models';
 import {
-  Viewport,
-  VIEWPORT_PLUGIN_ID,
-  ViewportPluginConfig,
-  ViewportPluginPackage,
-  ViewportState,
-} from '@embedpdf/plugin-viewport/preact';
-import {
-  Scroller,
-  SCROLL_PLUGIN_ID,
-  ScrollPlugin,
-  ScrollPluginConfig,
-  ScrollPluginPackage,
-  ScrollState,
-  ScrollStrategy,
-} from '@embedpdf/plugin-scroll/preact';
-import {
-  SPREAD_PLUGIN_ID,
-  SpreadMode,
-  SpreadPlugin,
-  SpreadPluginConfig,
-  SpreadPluginPackage,
-  SpreadState,
-} from '@embedpdf/plugin-spread/preact';
-import {
-  LOADER_PLUGIN_ID,
-  LoaderPlugin,
-  LoaderPluginPackage,
-} from '@embedpdf/plugin-loader/preact';
-import {
-  PluginUIProvider,
-  MenuItem,
-  defineComponent,
-  GlobalStoreState,
-  UIComponentType,
-  UIPlugin,
-  UIPluginConfig,
-  UIPluginPackage,
-  isActive,
-  UI_PLUGIN_ID,
-  isDisabled,
-  getIconProps,
-} from '@embedpdf/plugin-ui/preact';
-import {
-  attachmentsRenderer,
-  commandMenuRenderer,
-  dividerRenderer,
-  groupedItemsRenderer,
-  headerRenderer,
-  iconButtonRenderer,
-  leftPanelMainRenderer,
-  LeftPanelMainProps,
-  outlineRenderer,
-  pageControlsContainerRenderer,
-  PageControlsProps,
-  pageControlsRenderer,
-  panelRenderer,
-  searchRenderer,
-  selectButtonRenderer,
-  tabButtonRenderer,
-  textSelectionMenuRenderer,
-  thumbnailsRender,
-  zoomRenderer,
-  ZoomRendererProps,
-  printModalRenderer,
-} from './renderers';
-import { leftPanelAnnotationStyleRenderer } from './annotation-sidebar';
-import {
   PinchWrapper,
   MarqueeZoom,
   ZOOM_PLUGIN_ID,
@@ -91,7 +22,6 @@ import {
   ZoomPluginPackage,
   ZoomState,
 } from '@embedpdf/plugin-zoom/preact';
-import { RenderLayer, RenderPluginPackage } from '@embedpdf/plugin-render/preact';
 import {
   Rotate,
   ROTATE_PLUGIN_ID,
@@ -177,11 +107,82 @@ import {
 } from '@embedpdf/plugin-redaction/preact';
 import { AttachmentPluginPackage } from '@embedpdf/plugin-attachment/preact';
 import { FormPluginPackage, FormLayer } from '@embedpdf/plugin-form/preact';
-import { Capture } from './capture';
-import { HintLayer } from './hint-layer';
+import {
+  LOADER_PLUGIN_ID,
+  LoaderPlugin,
+  LoaderPluginPackage,
+} from '@embedpdf/plugin-loader/preact';
+import { RenderLayer, RenderPluginPackage } from '@embedpdf/plugin-render/preact';
+import {
+  Scroller,
+  SCROLL_PLUGIN_ID,
+  ScrollPlugin,
+  ScrollPluginConfig,
+  ScrollPluginPackage,
+  ScrollState,
+  ScrollStrategy,
+} from '@embedpdf/plugin-scroll/preact';
+import {
+  SPREAD_PLUGIN_ID,
+  SpreadMode,
+  SpreadPlugin,
+  SpreadPluginConfig,
+  SpreadPluginPackage,
+  SpreadState,
+} from '@embedpdf/plugin-spread/preact';
+import {
+  PluginUIProvider,
+  MenuItem,
+  defineComponent,
+  GlobalStoreState,
+  UIComponentType,
+  UIPlugin,
+  UIPluginConfig,
+  UIPluginPackage,
+  isActive,
+  UI_PLUGIN_ID,
+  isDisabled,
+  getIconProps,
+} from '@embedpdf/plugin-ui/preact';
+import {
+  Viewport,
+  VIEWPORT_PLUGIN_ID,
+  ViewportPluginConfig,
+  ViewportPluginPackage,
+  ViewportState,
+} from '@embedpdf/plugin-viewport/preact';
+import { h, Fragment } from 'preact';
+
 import { AnnotationMenu } from './annotation-menu';
+import { leftPanelAnnotationStyleRenderer } from './annotation-sidebar';
+import { Capture } from './capture';
 import { commentRender } from './comment-sidebar';
+import { HintLayer } from './hint-layer';
 import { RedactionMenu } from './redaction-menu';
+import {
+  attachmentsRenderer,
+  commandMenuRenderer,
+  dividerRenderer,
+  groupedItemsRenderer,
+  headerRenderer,
+  iconButtonRenderer,
+  leftPanelMainRenderer,
+  LeftPanelMainProps,
+  outlineRenderer,
+  pageControlsContainerRenderer,
+  PageControlsProps,
+  pageControlsRenderer,
+  panelRenderer,
+  searchRenderer,
+  selectButtonRenderer,
+  tabButtonRenderer,
+  textSelectionMenuRenderer,
+  thumbnailsRender,
+  zoomRenderer,
+  ZoomRendererProps,
+  printModalRenderer,
+} from './renderers';
+import styles from '../styles/index.css';
 
 export { ScrollStrategy, ZoomMode, SpreadMode, Rotation };
 
@@ -271,8 +272,8 @@ export const menuItems: Record<string, MenuItem<State>> = {
     id: 'menuCtr',
     icon: 'menu',
     label: 'Menu',
-    //shortcut: 'Shift+M',
-    //shortcutLabel: 'M',
+    // shortcut: 'Shift+M',
+    // shortcutLabel: 'M',
     type: 'menu',
     children: ['openFile', 'download', 'enterFS', 'screenshot', 'print'],
     active: (storeState) =>
@@ -282,8 +283,8 @@ export const menuItems: Record<string, MenuItem<State>> = {
     id: 'download',
     icon: 'download',
     label: 'Download',
-    //shortcut: 'Shift+D',
-    //shortcutLabel: 'D',
+    // shortcut: 'Shift+D',
+    // shortcutLabel: 'D',
     type: 'action',
     action: (registry) => {
       const exportPlugin = registry.getPlugin<ExportPlugin>(EXPORT_PLUGIN_ID)?.provides();
@@ -318,8 +319,8 @@ export const menuItems: Record<string, MenuItem<State>> = {
         : 'Enter full screen';
       return fullscreen;
     },
-    //shortcut: 'Shift+F',
-    //shortcutLabel: 'F',
+    // shortcut: 'Shift+F',
+    // shortcutLabel: 'F',
     type: 'action',
     action: (registry) => {
       const fullscreen = registry.getPlugin<FullscreenPlugin>(FULLSCREEN_PLUGIN_ID)?.provides();
@@ -354,8 +355,8 @@ export const menuItems: Record<string, MenuItem<State>> = {
     id: 'save',
     icon: 'save',
     label: 'Save',
-    //shortcut: 'Shift+S',
-    //shortcutLabel: 'S',
+    // shortcut: 'Shift+S',
+    // shortcutLabel: 'S',
     type: 'action',
     action: () => {
       console.log('save');
@@ -365,8 +366,8 @@ export const menuItems: Record<string, MenuItem<State>> = {
     id: 'print',
     icon: 'print',
     label: 'Print',
-    //shortcut: 'Shift+P',
-    //shortcutLabel: 'P',
+    // shortcut: 'Shift+P',
+    // shortcutLabel: 'P',
     type: 'action',
     action: (registry, state) => {
       const ui = registry.getPlugin<UIPlugin>(UI_PLUGIN_ID)?.provides();
@@ -385,8 +386,8 @@ export const menuItems: Record<string, MenuItem<State>> = {
     id: 'settings',
     icon: 'settings',
     label: 'Settings',
-    //shortcut: 'Shift+E',
-    //shortcutLabel: 'E',
+    // shortcut: 'Shift+E',
+    // shortcutLabel: 'E',
     dividerBefore: true,
     type: 'action',
     action: () => {
@@ -398,8 +399,8 @@ export const menuItems: Record<string, MenuItem<State>> = {
     id: 'viewCtr',
     icon: 'viewSettings',
     label: 'View controls',
-    //shortcut: 'Shift+V',
-    //shortcutLabel: 'V',
+    // shortcut: 'Shift+V',
+    // shortcutLabel: 'V',
     type: 'menu',
     children: ['pageOrientation', 'scrollLayout', 'pageLayout', 'enterFS'],
     active: (storeState) =>
@@ -531,8 +532,8 @@ export const menuItems: Record<string, MenuItem<State>> = {
     id: 'zoom',
     icon: 'zoomIn',
     label: 'Zoom Controls',
-    //shortcut: 'Shift+Z',
-    //shortcutLabel: 'Z',
+    // shortcut: 'Shift+Z',
+    // shortcutLabel: 'Z',
     type: 'menu',
     children: ['changeZoomLevel', 'zoomIn', 'zoomOut', 'fitToWidth', 'fitToPage', 'zoomInArea'],
     active: (storeState) => storeState.plugins.ui.commandMenu.commandMenu.activeCommand === 'zoom',
@@ -806,7 +807,7 @@ export const menuItems: Record<string, MenuItem<State>> = {
     id: 'sidebarMenu',
     label: 'Sidebar Menu',
     type: 'menu',
-    children: ['thumbnails', 'outline' /*'attachments'*/],
+    children: ['thumbnails', 'outline' /* 'attachments'*/],
   },
   thumbnails: {
     id: 'thumbnails',
@@ -877,8 +878,8 @@ export const menuItems: Record<string, MenuItem<State>> = {
     id: 'view',
     label: 'View',
     type: 'action',
-    //shortcut: 'Shift+V',
-    //shortcutLabel: 'V',
+    // shortcut: 'Shift+V',
+    // shortcutLabel: 'V',
     action: (registry) => {
       const ui = registry.getPlugin<UIPlugin>(UI_PLUGIN_ID)?.provides();
       const annotation = registry.getPlugin<AnnotationPlugin>(ANNOTATION_PLUGIN_ID)?.provides();
@@ -893,8 +894,8 @@ export const menuItems: Record<string, MenuItem<State>> = {
     id: 'annotate',
     label: 'Annotate',
     type: 'action',
-    //shortcut: 'Shift+A',
-    //shortcutLabel: 'A',
+    // shortcut: 'Shift+A',
+    // shortcutLabel: 'A',
     action: (registry) => {
       const ui = registry.getPlugin<UIPlugin>(UI_PLUGIN_ID)?.provides();
 
@@ -910,8 +911,8 @@ export const menuItems: Record<string, MenuItem<State>> = {
     id: 'shapes',
     label: 'Shapes',
     type: 'action',
-    //shortcut: 'Shift+S',
-    //shortcutLabel: 'S',
+    // shortcut: 'Shift+S',
+    // shortcutLabel: 'S',
     action: (registry) => {
       const ui = registry.getPlugin<UIPlugin>(UI_PLUGIN_ID)?.provides();
 
@@ -973,7 +974,7 @@ export const menuItems: Record<string, MenuItem<State>> = {
     label: 'More',
     icon: 'dots',
     type: 'menu',
-    children: ['view', 'annotate', 'shapes', 'redaction' /*'fillAndSign', 'form'*/],
+    children: ['view', 'annotate', 'shapes', 'redaction' /* 'fillAndSign', 'form'*/],
     active: (storeState) =>
       storeState.plugins.ui.commandMenu.commandMenu.activeCommand === 'tabOverflow',
   },
@@ -3023,7 +3024,11 @@ export function PDFViewer({ config }: PDFViewerProps) {
                                             </div>
                                           )}
                                         />
-                                        <FormLayer pageIndex={pageIndex} editable={false} scale={scale} />
+                                        <FormLayer
+                                          pageIndex={pageIndex}
+                                          editable={true}
+                                          scale={scale}
+                                        />
                                         <SelectionLayer pageIndex={pageIndex} scale={scale} />
                                       </PagePointerProvider>
                                     </Rotate>

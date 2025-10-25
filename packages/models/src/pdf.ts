@@ -1985,6 +1985,7 @@ export type PdfSupportedAnnoObject =
   | PdfUnderlineAnnoObject
   | PdfStrikeOutAnnoObject
   | PdfCaretAnnoObject
+  | PdfPopupAnnoObject
   | PdfFreeTextAnnoObject;
 
 /**

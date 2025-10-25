@@ -14,7 +14,7 @@ export function ComboboxField(props: FieldProps) {
 
   const { flag, options } = field;
   const name = field.alternateName || field.name;
-  const defalutValues = useMemo(() => {
+  const defaultValues = useMemo(() => {
     return options
       .filter((option: PdfWidgetAnnoOption) => {
         return option.isSelected;
@@ -27,7 +27,7 @@ export function ComboboxField(props: FieldProps) {
       });
   }, [options]);
 
-  const selectedValues = values || defalutValues;
+  const selectedValues = values?.length ? values : defaultValues;
 
   const isDisabled = !isEditable || !!(flag & PDF_FORM_FIELD_FLAG.READONLY);
   const isRequired = !!(flag & PDF_FORM_FIELD_FLAG.READONLY);

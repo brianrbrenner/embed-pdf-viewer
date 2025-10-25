@@ -119,6 +119,7 @@ import {
   PdfTrappedStatus,
   PdfStampFit,
   PdfAddAttachmentParams,
+  PdfPopupAnnoObject,
 } from '@embedpdf/models';
 import { isValidCustomKey, readArrayBuffer, readString } from './helper';
 import { WrappedPdfiumModule } from '@embedpdf/pdfium';
@@ -4265,6 +4266,11 @@ export class PdfiumEngine<T = Blob> implements PdfEngine<T> {
           annotation = this.readPdfCaretAnno(page, annotationPtr, index);
         }
         break;
+      case PdfAnnotationSubtype.POPUP:
+        {
+          annotation = this.readPdfPopupAnno(page, annotationPtr, index);
+        }
+        break;
       default:
         {
           annotation = this.readPdfAnno(page, subType, annotationPtr, index);
@@ -5876,6 +5882,45 @@ export class PdfiumEngine<T = Blob> implements PdfEngine<T> {
   }
 
   /**
+   * Read pdf popup annotation
+   * @param page  - pdf page infor
+   * @param annotationPtr - pointer to pdf annotation
+   * @param index  - index of annotation in the pdf page
+   * @returns pdf popup annotation
+   *
+   * @private
+   */
+  private readPdfPopupAnno(
+    page: PdfPageObject,
+    annotationPtr: number,
+    index: string,
+  ): PdfPopupAnnoObject | undefined {
+    const custom = this.getAnnotCustom(annotationPtr);
+    const pageRect = this.readPageAnnoRect(annotationPtr);
+    const rect = this.convertPageRectToDeviceRect(page, pageRect);
+    const author = this.getAnnotString(annotationPtr, 'T');
+    const modified = this.getAnnotationDate(annotationPtr, 'M');
+    const created = this.getAnnotationDate(annotationPtr, 'CreationDate');
+    const flags = this.getAnnotationFlags(annotationPtr);
+    const contents = this.getAnnotString(annotationPtr, 'Contents') || '';
+    const open = this.getAnnotPopupOpen(annotationPtr) || false;
+
+    return {
+      pageIndex: page.index,
+      custom,
+      id: index,
+      type: PdfAnnotationSubtype.POPUP,
+      contents,
+      open,
+      rect,
+      flags,
+      author,
+      modified,
+      created,
+    };
+  }
+
+  /**
    * Read pdf stamp annotation
    * @param page  - pdf page infor
    * @param annotationPtr - pointer to pdf annotation
@@ -6158,6 +6203,31 @@ export class PdfiumEngine<T = Blob> implements PdfEngine<T> {
   private setAnnotationFlags(annotationPtr: number, flags: PdfAnnotationFlagName[]): boolean {
     const rawFlags = namesToFlags(flags);
     return this.pdfiumModule.FPDFAnnot_SetFlags(annotationPtr, rawFlags);
+  }
+
+  /**
+   * Resolve if Popup is open
+   *
+   * @param annotationPtr  - pointer to FPDF_ANNOTATION
+   * @returns true if popup is open
+   *
+   * @private
+   */
+  private getAnnotPopupOpen(annotationPtr: number): boolean | undefined {
+    const popupAnnotationPtr = this.pdfiumModule.FPDFAnnot_GetLinkedAnnot(annotationPtr, 'Popup');
+
+    if (!popupAnnotationPtr) {
+      return;
+    }
+
+    const openLength = this.pdfiumModule.FPDFAnnot_GetStringValue(popupAnnotationPtr, 'Open', 0, 0);
+    const openBytesCount = (openLength + 1) * 2; // include NIL
+    const openPtr = this.memoryManager.malloc(openBytesCount);
+    this.pdfiumModule.FPDFAnnot_GetStringValue(popupAnnotationPtr, 'Open', openPtr, openBytesCount);
+    const open = this.pdfiumModule.pdfium.UTF16ToString(openPtr);
+    this.memoryManager.free(openPtr);
+
+    return open === 'true';
   }
 
   /**
